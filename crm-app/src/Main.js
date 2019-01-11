@@ -2,6 +2,33 @@ import React, { Component } from 'react';
 import CustomerList from './CustomerList';
 import ProfileView from './ProfileView';
 
+function sortByName(a, b) {
+  const aName = a.name.toUpperCase();
+  const bName = b.name.toUpperCase();
+
+  if (aName < bName) {
+    return -1;
+  } else if(aName > bName) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+function getCustomerFromLocalStorage(key) {
+  const customer =  JSON.parse(localStorage.getItem(key));
+  return customer;
+}
+
+function setCustomerInLocalStorage(key, customer) {
+  if (customer !== null) {
+    localStorage.setItem(key, JSON.stringify(customer));
+  }
+}
+
+function removeCustomerFromLocalStorage(key) {
+  return localStorage.removeItem(key);
+}
 
 class Main extends Component {
   constructor(props) {
@@ -12,33 +39,38 @@ class Main extends Component {
     };
   }
 
-  insertCustomer = (key, newCustomer) => {
+  saveCustomer = (key, customer) => {
     const pos = this.searchCustomer(key);
 
-    if ( pos < 0) {
-      this.setCustomerInLocalStorage(key, newCustomer);
-
-      const customers = [...this.state.customers, newCustomer];
-      this.setState({
-        isClear: true,
-        customers: customers
-      });
+    if (pos < 0) {
+      this.insertCustomer(key, customer);
+    } else {
+      this.updateCustomer(key, pos, customer);
     }
   }
 
-  updateCustomer = (key, updatedCustomer) => {
-    const pos = this.searchCustomer(key);
+  insertCustomer = (key, newCustomer) => {
+    const customers = [...this.state.customers, newCustomer];
+
+    setCustomerInLocalStorage(key, newCustomer);
+    customers.sort((a, b) => sortByName(a, b));
+    this.setState({
+      customerForDisplay: null,
+      customers: customers
+    });
+  }
+
+  updateCustomer = (key, pos, updatedCustomer) => {
     const customers = [...this.state.customers];
 
-    if (pos > -1) {
-      this.setCustomerInLocalStorage(key, updatedCustomer);
-      customers.splice(pos, 1);
-      customers.push(updatedCustomer);
-      this.setState({
-        customerForDisplay: null,
-        customers: customers
-      });
-    }
+    setCustomerInLocalStorage(key, updatedCustomer);
+    customers.splice(pos, 1);
+    customers.push(updatedCustomer);
+    customers.sort((a, b) => sortByName(a, b));
+    this.setState({
+      customerForDisplay: null,
+      customers: customers
+    });
   }
 
   displayCustomer = (customer) => {
@@ -50,18 +82,15 @@ class Main extends Component {
   searchCustomer = (key) => {
     const customers = [...this.state.customers];
     const pos = customers.findIndex(customer => (customer.mail === key));
-    //const found = customers.map(customer => customer.mail).indexOf(key);
     return pos;
-  }
-
-  searchCustomerAsPhone = () => {
   }
 
   deleteCustomer = (key) => {
     const customers = [...this.state.customers];
     const pos = customers.map(customer => customer.mail).indexOf(key);
+
     customers.splice(pos, 1);
-    this.removeCustomerFromLocalStorage(key);
+    removeCustomerFromLocalStorage(key);
 
     this.setState({
       customerForDisplay: null,
@@ -69,29 +98,17 @@ class Main extends Component {
     });
   }
 
-  getCustomerFromLocalStorage = (key) => {
-    const customer =  JSON.parse(localStorage.getItem(key));
-    return customer;
-  }
-
-  setCustomerInLocalStorage = (key, customer) => {
-    localStorage.setItem(key, JSON.stringify(customer));
-  }
-
-  removeCustomerFromLocalStorage = (key) => {
-    localStorage.removeItem(key);
-  }
-
   componentDidMount() {
     const customers = [];
     for (let key in localStorage) {
-      const customerInfo = this.getCustomerFromLocalStorage(key);
+      const customerInfo = getCustomerFromLocalStorage(key);
       if (customerInfo != null) {
         customers.push(customerInfo);
       }
     }
 
     if (customers.length > 0) {
+      customers.sort((a, b) => sortByName(a, b));
       this.setState({
         customers
       });
@@ -106,8 +123,8 @@ class Main extends Component {
           displayItem={this.displayCustomer}
         />
         <ProfileView
-          onSave={this.insertCustomer}
-          onModify={this.updateCustomer}
+          onSave={this.saveCustomer}
+          onModify={this.saveCustomer}
           onDelete={this.deleteCustomer}
           customer={this.state.customerForDisplay}
           isClear={this.state.isClear}
