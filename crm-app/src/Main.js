@@ -38,14 +38,22 @@ class Main extends Component {
 		};
 	}
 
-	saveCustomer = (key, customer) => {
+	saveCustomer = (key, customer, isFilledForm) => {
 		const customers = [...this.state.customers];
 		const pos = customers.findIndex(customer => (customer.mail === key));
 
-		if (pos < 0) {
+		if ((pos < 0) && !isFilledForm) {
 			this.insertCustomer(key, customer);
-		} else {
+			return true;
+		} else if ((pos >=0) && !isFilledForm) {
+			alert("Error: This email alreay exists.");
+			return false;
+		} else if ((pos >=0) && isFilledForm ) {
 			this.updateCustomer(key, pos, customer);
+			return true;
+		} else {
+			alert("Error: Cannot update customer's information due to unregistered email address. ");
+			return false;
 		}
 	}
 

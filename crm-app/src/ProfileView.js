@@ -22,6 +22,7 @@ class ProfileView extends Component {
 	constructor (props) {
 		super(props);
 		this.formRef = React.createRef();
+		this.isFilledForm = false;
 	}
 
 	handleSave = (e) => {
@@ -35,7 +36,10 @@ class ProfileView extends Component {
 				mail: mail,
 				phone: phone
 			}
-			this.props.onSave(mail, info);
+			const retval = this.props.onSave(mail, info, this.isFilledForm);
+			if (!retval) {
+				this.clearForm(e.target);
+			}
 		}
 		e.preventDefault();
 	}
@@ -44,6 +48,7 @@ class ProfileView extends Component {
 		const form = e.target.form;
 		enableElement(form.mail);
 		this.clearForm(form);
+		this.isFilledForm = false;
 		this.props.onCancel();
 		e.preventDefault();
 	}
@@ -75,10 +80,12 @@ class ProfileView extends Component {
 
 		if (customer != null) {
 			this.setCustomerInfo(customer);
+			this.isFilledForm = true;
 			disableElement(form.mail);
 			this.deleteButton = addButton('Delete', this.handleDelete);
 		} else {
 			this.clearForm(form);
+			this.isFilledForm = false;
 			enableElement(form.mail);
 			this.deleteButton = null;
 		}
