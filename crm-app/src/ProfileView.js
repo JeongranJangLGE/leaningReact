@@ -32,9 +32,9 @@ class ProfileView extends Component {
 
 		if (name !== '' || mail !== '' || phone !== '') {
 			const info = {
-				name: name,
-				mail: mail,
-				phone: phone
+				name,
+				mail,
+				phone
 			}
 			const retval = this.props.onSave(mail, info, this.isFilledForm);
 			if (!retval) {

@@ -8,13 +8,13 @@ class CustomerList extends Component {
 		this.props.displayItem(selectedItem);
 	}
 
-	createTasks = (item) => {
+	createTasks = (mail, name) => {
 		return(
 			<li
-				key={item.mail}
-				name={item.mail}
+				key={mail}
+				name={mail}
 				onClick={this.handleItem} >
-				{item.name}
+				{name}
 			</li>
 		)
 	}
@@ -22,7 +22,9 @@ class CustomerList extends Component {
 	render () {
 		const customers = this.props.customers;
 		customers.sort((a, b) => a.name-b.name);
-		const listItems = customers.map(this.createTasks);
+		const listItems = customers.map((customer) => {
+			return this.createTasks(customer.mail, customer.name);
+		});
 		return(
 			<div className="listContainer">
 				<ul>{listItems}</ul>
