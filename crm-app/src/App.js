@@ -4,9 +4,7 @@ import Main from './Main';
 function Header() {
 	return (
 		<div className="header">
-			<p>
-				Customer Relationship Management System
-			</p>
+			Customer Relationship Management System
 		</div>
 	);
 }
@@ -14,7 +12,7 @@ function Header() {
 class App extends Component {
 	render() {
 		return (
-			<div className="app">
+			<div>
 				<Header />
 				<Main />
 			</div>

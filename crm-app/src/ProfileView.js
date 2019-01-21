@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+
 function addButton (name, handle) {
 	return (
 		<button type="button" onClick={handle}>
@@ -9,13 +10,15 @@ function addButton (name, handle) {
 }
 
 function enableElement (element) {
-	if (element.hasAttribute('disabled')) {
+	if (element.disabled) {
 		element.disabled = false;
 	}
 }
 
 function disableElement (element) {
-	element.setAttribute('disabled', true);
+	if (!element.disabled) {
+		element.disabled = true;
+	}
 }
 
 class ProfileView extends Component {
@@ -66,7 +69,7 @@ class ProfileView extends Component {
 	}
 
 	setCustomerInfo = (customer) => {
-		if (customer && customer != null) {
+		if (customer) {
 			const form = this.formRef.current;
 			form.name.value = customer.name;
 			form.mail.value = customer.mail;
@@ -74,15 +77,21 @@ class ProfileView extends Component {
 		}
 	}
 
+	componentDidMount() {
+		const form = this.formRef.current;
+		form.submit.addEventListener('onclick', this.handleSave);
+		form.cancel.addEventListener('onclick', this.handleCancel);
+	}
+
 	componentWillUpdate (nextProps, nextState) {
 		const customer =nextProps.customer;
 		const form = this.formRef.current;
 
-		if (customer != null) {
+		if (customer) {
 			this.setCustomerInfo(customer);
 			this.isFilledForm = true;
 			disableElement(form.mail);
-			this.deleteButton = addButton('Delete', this.handleDelete);
+			this.deleteButton = addButton('delete', this.handleDelete);
 		} else {
 			this.clearForm(form);
 			this.isFilledForm = false;
@@ -125,10 +134,13 @@ class ProfileView extends Component {
 							required
 						/>
 					</div>
-					<button type="submit">
+					<button
+						name="submit"
+						type="submit">
 						Save
 					</button>
 					<button
+						name="cancel"
 						type="button"
 						onClick={this.handleCancel}>
 						Cancel

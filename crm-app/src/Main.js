@@ -6,13 +6,7 @@ function compareByName (a, b) {
 	const aName = a.name.toUpperCase();
 	const bName = b.name.toUpperCase();
 
-	if (aName < bName) {
-		return -1;
-	} else if(aName > bName) {
-		return 1;
-	} else {
-		return 0;
-	}
+	return (aName < bName && -1) || (aName > bName && 1) || 0;
 }
 
 function getCustomerFromLocalStorage (key) {
@@ -20,9 +14,7 @@ function getCustomerFromLocalStorage (key) {
 }
 
 function setCustomerInLocalStorage (key, customer) {
-	if (customer !== null) {
-		localStorage.setItem(key, JSON.stringify(customer));
-	}
+	localStorage.setItem(key, JSON.stringify(customer));
 }
 
 function removeCustomerFromLocalStorage (key) {
@@ -42,19 +34,23 @@ class Main extends Component {
 		const customers = [...this.state.customers];
 		const pos = customers.findIndex(customer => (customer.mail === key));
 
-		if ((pos < 0) && !isFilledForm) {
-			this.insertCustomer(key, customer);
-			return true;
-		} else if ((pos >=0) && !isFilledForm) {
-			alert("Error: This email alreay exists.");
-			return false;
-		} else if ((pos >=0) && isFilledForm ) {
-			this.updateCustomer(key, pos, customer);
-			return true;
+		if (!isFilledForm) {
+			if (pos < 0) {
+				this.insertCustomer(key, customer);
+			} else {
+				alert("Error: This email alreay exists.");
+				return false;
+			}
 		} else {
-			alert("Error: Cannot update customer's information due to unregistered email address. ");
-			return false;
+			if (pos < 0) {
+				alert("Error: Cannot update customer's information due to unregistered email address. ");
+				return false;
+			} else {
+				this.updateCustomer(key, pos, customer);
+			}
 		}
+
+		return true;
 	}
 
 	insertCustomer = (key, newCustomer) => {
@@ -111,7 +107,7 @@ class Main extends Component {
 		const customers = [];
 		for (let key in localStorage) {
 			const customerInfo = getCustomerFromLocalStorage(key);
-			if (customerInfo != null) {
+			if (customerInfo) {
 				customers.push(customerInfo);
 			}
 		}
