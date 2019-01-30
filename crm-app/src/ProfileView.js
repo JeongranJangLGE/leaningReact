@@ -29,9 +29,9 @@ class ProfileView extends Component {
 	}
 
 	handleSave = (e) => {
-		const name = e.target.name.value;
-		const mail = e.target.mail.value;
-		const phone = e.target.phone.value;
+		const name = e.target.form.name.value;
+		const mail = e.target.form.mail.value;
+		const phone = e.target.form.phone.value;
 
 		if (name !== '' || mail !== '' || phone !== '') {
 			const info = {
@@ -79,12 +79,12 @@ class ProfileView extends Component {
 
 	componentDidMount() {
 		const form = this.formRef.current;
-		form.submit.addEventListener('onclick', this.handleSave);
-		form.cancel.addEventListener('onclick', this.handleCancel);
+		form.submit.addEventListener('click', this.handleSave);
+		form.cancel.addEventListener('click', this.handleCancel);
 	}
 
 	componentWillUpdate (nextProps, nextState) {
-		const customer =nextProps.customer;
+		const customer = nextProps.customer;
 		const form = this.formRef.current;
 
 		if (customer) {
@@ -104,8 +104,7 @@ class ProfileView extends Component {
 		return(
 			<div className="viewContainer">
 				<form
-					ref={this.formRef}
-					onSubmit={this.handleSave}>
+					ref={this.formRef} >
 					<div>
 						<label>Name: </label>
 						<input
