@@ -140,8 +140,7 @@ class ProfileView extends Component {
 					</button>
 					<button
 						name="cancel"
-						type="button"
-						onClick={this.handleCancel}>
+						type="button">
 						Cancel
 					</button>
 					{this.deleteButton}
