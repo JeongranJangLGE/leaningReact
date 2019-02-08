@@ -5,7 +5,7 @@ const CustomerList = ({customers=[], displayItem=f=>f}) => {
 
 	const handleItem = (e) => {
 		const name = e.target.getAttribute('name');
-		const selectedItem = JSON.parse(localStorage.getItem(name));
+		const selectedItem = JSON.parse(localStorage['customer'].getItem(name));
 
 		displayItem(selectedItem);
 	}
