@@ -10,15 +10,15 @@ function compareByName (a, b) {
 }
 
 function getCustomerFromLocalStorage (key) {
-	return JSON.parse(localStorage.getItem(key));
+	return JSON.parse(localStorage['customers'].getItem(key));
 }
 
 function setCustomerInLocalStorage (key, customer) {
-	localStorage.setItem(key, JSON.stringify(customer));
+	localStorage['customers'].setItem(key, JSON.stringify(customer));
 }
 
 function removeCustomerFromLocalStorage (key) {
-	localStorage.removeItem(key);
+	localStorage['customers'].removeItem(key);
 }
 
 class Main extends Component {
@@ -105,7 +105,7 @@ class Main extends Component {
 
 	componentDidMount () {
 		const customers = [];
-		for (let key in localStorage) {
+		for (let key in localStorage['customers']) {
 			const customerInfo = getCustomerFromLocalStorage(key);
 			if (customerInfo) {
 				customers.push(customerInfo);
