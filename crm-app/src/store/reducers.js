@@ -1,21 +1,21 @@
-import C from '../constants'
+import C from '../constants';
+import storage  from '../utils/localStorage';
 
 export const customer = (state= {}, action) => {
 	switch (action.type) {
-		case C.ADD_CUSTOMER:
+		case C.ADD_CUSTOMER: {
 			return {
 				name: action.name,
 				mail: action.mail,
 				phone: action.phone
 			};
+		}
 		case C.UPDATE_CUSTOMER: {
-			const cus = {
+			return {
 					...state,
 					name: action.name,
 					phone: action.phone
-			}
-			console.log("update customer: " + cus);
-			return cus;
+			};
 		}
 		default:
 			return state;
@@ -25,25 +25,33 @@ export const customer = (state= {}, action) => {
 export const customers = (state = [], action) => {
 	switch (action.type) {
 		case C.ADD_CUSTOMER:
-			return [
+			const newCustomers = [
 				...state,
 				customer({}, action)
-				].sort(compareByName);
+			].sort(compareByName);
+			storage.setCustomers(newCustomers);
+			return newCustomers;
 		case C.UPDATE_CUSTOMER: {
+			if (action.index < 0) return state;
+
 			const shouldUpdated = state[action.index].name !== action.name ||
 								  state[action.index].phone !== action.phone;
-			if (!shouldUpdated) return state;
-			else {
-				const customers = state.slice();
-				customers.splice(action.index, 1, customer(state[action.index], action));
-				customers.sort(compareByName);
-				return customers;
+			if (shouldUpdated) {
+				const newCustomers = state.slice();
+				newCustomers.splice(action.index, 1, customer(state[action.index], action))
+							.sort(compareByName);
+				storage.setCustomers(newCustomers);
+				return newCustomers;
+			} else {
+				return state;
 			}
 		}
 		case C.DELETE_CUSTOMER: {
-			const customers = state.slice();
-			customers.splice(state.map(c => c.mail).indexOf(action.key));
-			return customers;
+			const newCustomers = state.slice();
+			newCustomers.splice(action.index, 1);
+			// newCustomers.splice(state.map(c => c.mail).indexOf(action.key));
+			storage.setCustomers(newCustomers);
+			return newCustomers;
 		}
 		default:
 			return state;
@@ -51,12 +59,14 @@ export const customers = (state = [], action) => {
 }
 
 export const displayedIndex = (state = -1, action) => {
+	const RESET = -1;
 	switch (action.type) {
 		case C.DISPLAY_CUSTOMER :
 			return action.index;
-		case C.CLEAR_FORM :
+		case C.DELETE_CUSTOMER:
+		case C.RESET_CUSTOMER :
 		default:
-			 return state;
+			 return RESET;
 	}
 }
 

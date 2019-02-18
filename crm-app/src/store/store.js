@@ -1,21 +1,18 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import { customers, displayedIndex } from './reducers';
+import storage from '../utils/localStorage';
 
-const initialState = {
-	customers: [
-		{
-			name: "apple",
-			mail: "apple@gmail.com",
-			phone: "010-8901-1234"
-		},
-		{
-			name: "banana",
-			mail: "banana@gmail.com",
-			phone: "010-1234-1234"
-		}
-	],
-	displayedIndex: -1
-};
+const initialiseData =() => {
+
+	const initialData = {
+		customers: [],
+		displayedIndex: -1
+	};
+	if (storage.hasData())
+		initialData['customers'] = storage.getCustomers();
+
+	return initialData;
+}
 
 const logger = store => next => action => {
 	let result;
@@ -27,12 +24,10 @@ const logger = store => next => action => {
 	console.groupEnd();
 }
 
-const storeFactory = (initialState = []) =>
+const storeFactory = (initialise = initialiseData) =>
 	applyMiddleware(logger)(createStore)(
 	combineReducers({customers, displayedIndex}),
-	(localStorage['customers']) ?
-	JSON.parse(localStorage['customers']) :
-	[]
+		initialise()
 );
 
 export default storeFactory;

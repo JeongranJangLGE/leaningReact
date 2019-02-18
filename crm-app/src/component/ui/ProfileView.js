@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 
 function addButton (name, handle) {
@@ -25,56 +26,49 @@ class ProfileView extends Component {
 	constructor (props) {
 		super(props);
 		this.formRef = React.createRef();
-		this.isFilledForm = false;
+		this.isWritten = false;
 	}
 
 	handleSave = (e) => {
-		const name = e.target.form.name.value;
-		const mail = e.target.form.mail.value;
-		const phone = e.target.form.phone.value;
+		const { displayedIndex, onAdd, onUpdate } = this.props;
+		const form = e.target.form;
+		const name = form.name.value;
+		const mail = form.mail.value;
+		const phone = form.phone.value;
 
-		if (name !== '' || mail !== '' || phone !== '') {
-			const info = {
-				name,
-				mail,
-				phone
-			}
-			const retval = this.props.onSave(mail, info, this.isFilledForm);
-			if (!retval) {
-				this.clearForm(e.target);
-			}
+		if (name === '' && mail === '' && phone === '')
+			return;
+
+		// check if it is new customer or modified customer
+		if (this.isWritten) {
+			onUpdate(displayedIndex, name, phone);
+		} else {
+			if (displayedIndex < 0) {
+				onAdd(name, mail, phone);
+			} else
+				alert("Error: This email alreay exists.");
 		}
+
 		e.preventDefault();
 	}
 
 	handleCancel = (e) => {
-		const form = e.target.form;
-		enableElement(form.mail);
-		this.clearForm(form);
-		this.isFilledForm = false;
+		this.clearForm(e.target.form);
 		this.props.onCancel();
 		e.preventDefault();
 	}
 
 	handleDelete = (e) => {
-		const form = e.target.form;
-		this.props.onDelete(form.mail.value);
+		const { displayedIndex, onDelete } = this.props;
+		onDelete(displayedIndex);
 		e.preventDefault();
 	}
 
 	clearForm = (target) => {
+		enableElement(target.mail);
 		target.name.value = '';
 		target.mail.value = '';
 		target.phone.value = '';
-	}
-
-	setCustomerInfo = (customer) => {
-		if (customer) {
-			const form = this.formRef.current;
-			form.name.value = customer.name;
-			form.mail.value = customer.mail;
-			form.phone.value = customer.phone;
-		}
 	}
 
 	componentDidMount() {
@@ -84,19 +78,20 @@ class ProfileView extends Component {
 	}
 
 	componentWillUpdate (nextProps, nextState) {
-		const customer = nextProps.customer;
+		const {customers, displayedIndex } = nextProps;
 		const form = this.formRef.current;
 
-		if (customer) {
-			this.setCustomerInfo(customer);
-			this.isFilledForm = true;
+		if (displayedIndex < 0) {
+			this.clearForm(form);
+			this.isWritten = false;
+			this.deleteButton = null;
+		} else {
+			form.name.value = customers[displayedIndex].name;
+			form.mail.value = customers[displayedIndex].mail;
+			form.phone.value = customers[displayedIndex].phone;
+			this.isWritten = true;
 			disableElement(form.mail);
 			this.deleteButton = addButton('delete', this.handleDelete);
-		} else {
-			this.clearForm(form);
-			this.isFilledForm = false;
-			enableElement(form.mail);
-			this.deleteButton = null;
 		}
 	}
 
@@ -148,6 +143,15 @@ class ProfileView extends Component {
 			</div>
 		);
 	}
+}
+
+ProfileView.propTypes = {
+	customers: PropTypes.array,
+	displayedIndex:PropTypes.number,
+	onAdd: PropTypes.func,
+	onCancel: PropTypes.func,
+	onDelete: PropTypes.func,
+	onUpdate: PropTypes.func
 }
 
 export default ProfileView;

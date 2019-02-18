@@ -1,13 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-const CustomerList = ({customers=[], displayItem=f=>f}) => {
-
+const CustomerList = ({customers=[], onDisplayItem=f=>f}) => {
 	const handleItem = (e) => {
-		const name = e.target.getAttribute('name');
-		const selectedItem = JSON.parse(localStorage['customer'].getItem(name));
-
-		displayItem(selectedItem);
+		const index = e.target.getAttribute('index');
+		onDisplayItem(index);
 	}
 
 	return(
@@ -15,9 +12,10 @@ const CustomerList = ({customers=[], displayItem=f=>f}) => {
 			<ul>
 				{(customers.length === 0) ?
 				<p>No customer listed. (Add a customer)</p> :
-					customers.map((customer) =>
+					customers.map((customer, index) =>
 						<li key={customer.mail}
 						name={customer.mail}
+						index={index}
 						onClick={handleItem}>
 						{customer.name}
 					</li>
@@ -30,7 +28,7 @@ const CustomerList = ({customers=[], displayItem=f=>f}) => {
 
 CustomerList.propTypes = {
 	customers: PropTypes.array,
-	displayItem:PropTypes.func
+	onDisplayItem:PropTypes.func
 }
 
 export default CustomerList;
