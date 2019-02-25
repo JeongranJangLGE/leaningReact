@@ -1,6 +1,6 @@
 import C from './constants';
 
-export const addCustomer  = (name, mail, phone) => ({
+export const addCustomer = (name, mail, phone) => ({
 	type: C.ADD_CUSTOMER,
 	name,
 	mail,

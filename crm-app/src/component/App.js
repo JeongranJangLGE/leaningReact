@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { List, View } from './containers';
+import List from './customer/List';
+import Profile from './customer/Profile';
 
-function Header() {
-	return (
+function Header () {
+	return(
 		<div className="header">
 			Customer Relationship Management System
 		</div>
@@ -11,11 +12,11 @@ function Header() {
 
 class App extends Component {
 
-	render() {
-		return (
+	render () {
+		return(
 			<div className="app">
 				<Header />
-				<View />
+				<Profile />
 				<List />
 			</div>
 		);

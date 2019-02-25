@@ -1,6 +1,7 @@
+import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { addCustomer, updateCustomer, deleteCustomer, resetCustomer } from '../../actions';
 
 function addButton (name, handle) {
 	return (
@@ -22,7 +23,7 @@ function disableElement (element) {
 	}
 }
 
-class ProfileView extends Component {
+class CustomerProfile extends Component {
 	constructor (props) {
 		super(props);
 		this.formRef = React.createRef();
@@ -36,8 +37,9 @@ class ProfileView extends Component {
 		const mail = form.mail.value;
 		const phone = form.phone.value;
 
-		if (name === '' && mail === '' && phone === '')
+		if (name === '' || mail === '' || phone === '') {
 			return;
+		}
 
 		// check if it is new customer or modified customer
 		if (this.isWritten) {
@@ -45,23 +47,22 @@ class ProfileView extends Component {
 		} else {
 			if (displayedIndex < 0) {
 				onAdd(name, mail, phone);
-			} else
-				alert("Error: This email alreay exists.");
+			} else {
+				alert('Error: This email alreay exists.');
+			}
 		}
 
 		e.preventDefault();
 	}
 
-	handleCancel = (e) => {
+	handleReset = (e) => {
 		this.clearForm(e.target.form);
-		this.props.onCancel();
-		e.preventDefault();
+		this.props.onReset();
 	}
 
 	handleDelete = (e) => {
 		const { displayedIndex, onDelete } = this.props;
 		onDelete(displayedIndex);
-		e.preventDefault();
 	}
 
 	clearForm = (target) => {
@@ -71,10 +72,10 @@ class ProfileView extends Component {
 		target.phone.value = '';
 	}
 
-	componentDidMount() {
+	componentDidMount () {
 		const form = this.formRef.current;
 		form.submit.addEventListener('click', this.handleSave);
-		form.cancel.addEventListener('click', this.handleCancel);
+		form.reset.addEventListener('click', this.handleReset);
 	}
 
 	componentWillUpdate (nextProps, nextState) {
@@ -134,9 +135,9 @@ class ProfileView extends Component {
 						Save
 					</button>
 					<button
-						name="cancel"
+						name="reset"
 						type="button">
-						Cancel
+						Reset
 					</button>
 					{this.deleteButton}
 				</form>
@@ -145,13 +146,34 @@ class ProfileView extends Component {
 	}
 }
 
-ProfileView.propTypes = {
+CustomerProfile.propTypes = {
 	customers: PropTypes.array,
-	displayedIndex:PropTypes.number,
+	displayedIndex: PropTypes.number,
 	onAdd: PropTypes.func,
-	onCancel: PropTypes.func,
+	onReset: PropTypes.func,
 	onDelete: PropTypes.func,
 	onUpdate: PropTypes.func
 }
 
-export default ProfileView;
+const Profile = connect(
+	state => ({
+		displayedIndex: state.displayedIndex,
+		customers: state.customers
+	}),
+	dispatch => ({
+		onAdd (name, mail, phone) {
+			dispatch(addCustomer(name, mail, phone))
+		},
+		onUpdate (index, name, phone) {
+			dispatch(updateCustomer(index, name, phone))
+		},
+		onDelete (index) {
+			dispatch(deleteCustomer(index))
+		},
+		onReset () {
+			dispatch(resetCustomer())
+		},
+	})
+)(CustomerProfile);
+
+export default Profile;
