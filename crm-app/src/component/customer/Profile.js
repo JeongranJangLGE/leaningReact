@@ -1,9 +1,10 @@
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import {connect} from 'react-redux';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { addCustomer, updateCustomer, deleteCustomer, resetCustomer } from '../../actions';
+import {addCustomer, updateCustomer, deleteCustomer, resetCustomer} from '../../actions';
 
 function addButton (name, handle) {
+	console.log('addButton: ' + this);
 	return (
 		<button type="button" onClick={handle}>
 			{name}
@@ -31,7 +32,7 @@ class CustomerProfile extends Component {
 	}
 
 	handleSave = (e) => {
-		const { displayedIndex, onAdd, onUpdate } = this.props;
+		const {displayedIndex, onAdd, onUpdate} = this.props;
 		const form = e.target.form;
 		const name = form.name.value;
 		const mail = form.mail.value;
@@ -61,7 +62,7 @@ class CustomerProfile extends Component {
 	}
 
 	handleDelete = (e) => {
-		const { displayedIndex, onDelete } = this.props;
+		const {displayedIndex, onDelete} = this.props;
 		onDelete(displayedIndex);
 	}
 
@@ -79,7 +80,7 @@ class CustomerProfile extends Component {
 	}
 
 	componentWillUpdate (nextProps, nextState) {
-		const {customers, displayedIndex } = nextProps;
+		const {customers, displayedIndex} = nextProps;
 		const form = this.formRef.current;
 
 		if (displayedIndex < 0) {
@@ -97,10 +98,9 @@ class CustomerProfile extends Component {
 	}
 
 	render () {
-		return(
+		return (
 			<div className="viewContainer">
-				<form
-					ref={this.formRef} >
+				<form ref={this.formRef}>
 					<div>
 						<label>Name: </label>
 						<input
@@ -150,10 +150,10 @@ CustomerProfile.propTypes = {
 	customers: PropTypes.array,
 	displayedIndex: PropTypes.number,
 	onAdd: PropTypes.func,
-	onReset: PropTypes.func,
+	onUpdate: PropTypes.func,
 	onDelete: PropTypes.func,
-	onUpdate: PropTypes.func
-}
+	onReset: PropTypes.func
+};
 
 const Profile = connect(
 	state => ({

@@ -9,7 +9,7 @@ const customer = () => {
 
 const customers = () => {
 	return ({
-		has: ()=> (localStorage.getItem('customers') ? true : false),
+		has: ()=> !!localStorage.getItem('customers'),
 		get: () => (JSON.parse(localStorage.getItem('customers'))),
 		set: (newCustomers) => {
 			localStorage.clear('customers');

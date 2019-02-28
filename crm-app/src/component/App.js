@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import List from './customer/List';
 import Profile from './customer/Profile';
 
 function Header () {
-	return(
+	return (
 		<div className="header">
 			Customer Relationship Management System
 		</div>
@@ -11,9 +11,8 @@ function Header () {
 }
 
 class App extends Component {
-
 	render () {
-		return(
+		return (
 			<div className="app">
 				<Header />
 				<Profile />
