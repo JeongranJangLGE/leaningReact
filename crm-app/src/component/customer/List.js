@@ -11,15 +11,16 @@ export const CustomerList = ({customers = [], onDisplayItem = f => f}) => {
 			<ul>
 				{
 					(customers.length === 0) ?
-					<p>No customer listed. (Add a customer)</p> :
-						customers.map((customer, index) =>
+						<p>No customer listed. (Add a customer)</p>
+						:
+						customers.map(({mail, name}, index) =>
 							<li
-								key={customer.mail}
-								name={customer.mail}
+								key={mail}
+								name={mail}
 								index={index}
 								onClick={handleItem}
 							>
-								{customer.name}
+								{name}
 							</li>
 						)
 				}

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import {addCustomer, updateCustomer, deleteCustomer, resetCustomer} from '../../actions';
 
 function addButton (name, handle) {
-	console.log('addButton: ' + this);
 	return (
 		<button type="button" onClick={handle}>
 			{name}
@@ -32,11 +31,12 @@ class CustomerProfile extends Component {
 	}
 
 	handleSave = (e) => {
-		const {displayedIndex, onAdd, onUpdate} = this.props;
-		const form = e.target.form;
-		const name = form.name.value;
-		const mail = form.mail.value;
-		const phone = form.phone.value;
+		const
+			{displayedIndex, onAdd, onUpdate} = this.props,
+			form = e.target.form,
+			name = form.name.value,
+			mail = form.mail.value,
+			phone = form.phone.value;
 
 		if (name === '' || mail === '' || phone === '') {
 			return;
